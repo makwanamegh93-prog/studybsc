@@ -134,7 +134,7 @@
         <!-- Section container -->
         <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-6 mb-8">
             <div class="flex justify-between items-center mb-6">
-                <h2 id="section-title" class="text-xl font-bold text-gray-900">Programming in C / C++</h2>
+                <h2 id="section-title" class="text-xl font-bold text-gray-900">SEC (Minor)</h2>
                 <button class="flex items-center gap-2 px-3 py-1.5 border border-gray-200 rounded text-xs font-medium text-gray-600 hover:bg-gray-50">
                     <i class="ph ph-share-network"></i> Share
                 </button>
@@ -146,7 +146,7 @@
             </div>
         </div>
 
-        <!-- Floating QR / Scan widget placeholder from screenshot -->
+        <!-- Floating QR / Scan widget placeholder -->
         <div class="fixed right-0 top-1/3 bg-primary text-white p-2 rounded-l-xl shadow-lg border border-blue-400 flex flex-col items-center hidden md:flex">
             <div class="bg-white p-1 rounded mb-1">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=studybsc" alt="QR" class="w-12 h-12">
@@ -165,8 +165,18 @@
 
     <!-- JavaScript to handle filtering -->
     <script>
-        // Database array (currently empty until you upload real PDFs)
-        const notesDatabase = [];
+        // Database array containing your uploaded study notes
+        const notesDatabase = [
+            { 
+                branch: 'Microbiology', 
+                level: 'Sem 1', 
+                subject: 'SEC (Minor)', 
+                title: 'Preview', 
+                downloads: '1',
+                viewUrl: 'https://drive.google.com/file/d/1nZrIjrnBUjtgBU66L-aCaLmsAoW5mktw/view?usp=drive_link',
+                downloadUrl: 'https://drive.google.com/file/d/1nZrIjrnBUjtgBU66L-aCaLmsAoW5mktw/view?usp=drive_link'
+            }
+        ];
 
         // Elements
         const filterBranch = document.getElementById('filter-branch');
@@ -245,14 +255,14 @@
                     <div class="border border-gray-200 rounded-xl p-5 hover:shadow-md transition bg-white flex flex-col h-full">
                         <div class="flex justify-between items-start mb-4">
                             <i class="ph-fill ph-file-pdf text-4xl text-pdfred"></i>
-                            <span class="text-xs text-gray-400 flex items-center gap-1"><i class="ph ph-download-simple"></i> ${note.downloads}</span>
+                            <span class="text-xs text-gray-400 flex items-center gap-1"><i class="ph ph-download-simple"></i> ${note.downloads || '1'}</span>
                         </div>
                         <h3 class="font-bold text-gray-900 mb-2">${note.title}</h3>
                         <p class="text-sm text-gray-500 mb-6 flex-grow">Notes and practice for ${note.title} (${note.subject})</p>
                         
                         <div class="grid grid-cols-2 gap-3 mt-auto">
-                            <button class="border border-primary text-primary font-semibold text-sm py-2 rounded-lg hover:bg-blue-50 transition">VIEW</button>
-                            <button class="bg-primary text-white font-semibold text-sm py-2 rounded-lg hover:bg-blue-800 transition">GET PDF</button>
+                            <a href="${note.viewUrl || '#'}" target="_blank" class="text-center border border-primary text-primary font-semibold text-sm py-2 rounded-lg hover:bg-blue-50 transition">VIEW</a>
+                            <a href="${note.downloadUrl || '#'}" target="_blank" class="text-center bg-primary text-white font-semibold text-sm py-2 rounded-lg hover:bg-blue-800 transition">GET PDF</a>
                         </div>
                     </div>
                 `;
@@ -270,7 +280,6 @@
         const branchParam = urlParams.get('branch');
         
         if (branchParam) {
-            // Find the matching option and select it
             for (let i = 0; i < filterBranch.options.length; i++) {
                 if (filterBranch.options[i].text === branchParam) {
                     filterBranch.selectedIndex = i;
