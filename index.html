@@ -15,6 +15,14 @@
                     colors: {
                         primary: '#0f172a', /* slate-900 */
                         accent: '#3b82f6',  /* blue-500 */
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '100%': { transform: 'translateX(100%)' }
+                        }
+                    },
+                    animation: {
+                        shimmer: 'shimmer 2s infinite'
                     }
                 }
             }
@@ -99,6 +107,19 @@
             <p class="text-slate-400 text-sm">&copy; 2026. Designed for excellence.</p>
         </div>
     </footer>
+
+    <!-- WhatsApp Floating Action Button -->
+    <a href="https://wa.me/919227838831" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-4 md:bottom-8 md:right-8 flex flex-col items-center gap-2 group z-50 transition-transform active:scale-90">
+        <div class="relative flex items-center justify-center h-16 w-16 rounded-full bg-white/40 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] border border-white/60 overflow-hidden transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,211,102,0.4)] group-hover:-translate-y-1">
+            <!-- Shimmer -->
+            <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/80 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+            <!-- Icon -->
+            <i class="ph ph-whatsapp-logo text-[40px] text-[#25D366] relative z-10 group-hover:scale-110 transition-transform duration-500 ease-out drop-shadow-sm"></i>
+        </div>
+        <span class="text-[10px] font-semibold text-slate-500 text-center leading-tight">
+            Support / Contact<br>Developer
+        </span>
+    </a>
 
 </body>
 </html>
