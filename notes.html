@@ -3,293 +3,445 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyBSc - BSc Preparation Notes</title>
+    <title>StudyBSc - Study Materials</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        primary: '#244ca3', 
-                        accent: '#ffcc00',  
-                        surface: '#f9fafb', 
-                        pdfred: '#e53935'
+                        primary: '#0f172a',
+                        accent: '#3b82f6',
+                        pdf: '#ef4444'
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '100%': { transform: 'translateX(100%)' }
+                        }
+                    },
+                    animation: {
+                        shimmer: 'shimmer 2s infinite'
                     }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #ffffff; }
-        .tab-active {
-            color: #244ca3;
-            border-bottom: 2px solid #244ca3;
-            font-weight: 600;
-        }
-        .filter-select {
+        .custom-select {
             appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 1em;
+            background-position: right 1.25rem center;
+            background-size: 1.2em;
+        }
+        /* Easing for iPad style glass animation */
+        .ease-spring {
+            transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .glow-box {
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        .group:hover .glow-box,
+        .group:active .glow-box {
+            box-shadow: 0 0 25px -5px currentColor;
         }
     </style>
 </head>
-<body class="text-gray-800 antialiased font-sans flex flex-col min-h-screen">
+<body class="bg-gray-50 text-slate-800 antialiased font-sans flex flex-col min-h-screen selection:bg-accent selection:text-white pb-24 md:pb-0">
 
-    <!-- Navigation -->
-    <nav class="border-b border-gray-100 py-3 px-6 md:px-12 flex items-center justify-between bg-white">
-        <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
-            <div class="bg-black text-accent font-bold text-xl h-10 w-10 flex items-center justify-center rounded-lg">
-                SB
-            </div>
-            <span class="font-bold text-xl hidden sm:block">StudyBSc</span>
-        </div>
-        
-        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
-            <a href="index.html" class="hover:text-primary transition-colors">Home</a>
-            <a href="#" class="hover:text-primary transition-colors">About</a>
-            <a href="notes.html" class="text-gray-900 hover:text-primary transition-colors">Study Material <i class="ph ph-caret-down inline-block align-middle"></i></a>
-            <a href="#" class="hover:text-primary transition-colors">Exam Prep <i class="ph ph-caret-down inline-block align-middle"></i></a>
-            <a href="#" class="hover:text-primary transition-colors">Career</a>
-        </div>
-
-        <div class="flex items-center gap-4">
-            <div class="h-8 w-8 rounded-full bg-gray-200 overflow-hidden cursor-pointer">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" class="h-full w-full object-cover">
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-3 sm:gap-4">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="bg-primary text-white font-bold text-lg h-9 w-9 flex items-center justify-center rounded-xl group-hover:rotate-3 transition-transform">
+                    SB
+                </div>
+                <span class="font-bold text-xl tracking-tight text-primary">StudyBSc</span>
+            </a>
+            
+            <!-- iPad Style Segmented Control -->
+            <div class="relative bg-gray-100/70 backdrop-blur-md p-1 rounded-full flex text-sm font-semibold w-full sm:w-auto min-w-[220px] shadow-inner">
+                <!-- Sliding Liquid Glass Indicator -->
+                <div id="tab-indicator" class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-white shadow-sm border border-gray-200/50 rounded-full transition-transform duration-500 ease-spring z-0"></div>
+                
+                <button onclick="switchTab('notes')" id="tab-notes" class="relative z-10 flex-1 px-4 sm:px-6 py-2 text-primary transition-colors duration-300">Notes</button>
+                <button onclick="switchTab('syllabus')" id="tab-syllabus" class="relative z-10 flex-1 px-4 sm:px-6 py-2 text-slate-500 hover:text-primary transition-colors duration-300">Syllabus</button>
             </div>
         </div>
     </nav>
 
-    <!-- Header Section -->
-    <div class="px-6 md:px-12 pt-6 pb-4 bg-white">
-        <div class="flex items-center gap-2 text-xs text-gray-500 font-medium uppercase tracking-wide mb-4">
-            <i class="ph ph-house text-sm"></i>
-            <i class="ph ph-caret-right"></i>
-            <span>EXAM PREP</span>
-            <i class="ph ph-caret-right"></i>
-            <span>EXAMS</span>
-            <i class="ph ph-caret-right"></i>
-            <span class="text-gray-800">NOTES</span>
-        </div>
+    <main class="flex-grow w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-12 relative overflow-hidden">
         
-        <div class="flex justify-between items-start">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">BSc DEGREE PREPARATION</h1>
-            <button class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
-                <i class="ph ph-share-network"></i> Share
-            </button>
-        </div>
-    </div>
-
-    <!-- Sub-Navigation Tabs -->
-    <div class="bg-blue-50/50 border-y border-gray-200 px-6 md:px-12 flex gap-8 overflow-x-auto">
-        <a href="#" class="py-4 tab-active whitespace-nowrap">Notes</a>
-        <a href="#" class="py-4 text-gray-500 hover:text-primary font-medium whitespace-nowrap">Syllabus</a>
-    </div>
-
-    <!-- Filters -->
-    <div class="px-6 md:px-12 py-4 flex gap-4 overflow-x-auto border-b border-gray-100">
-        <div class="flex items-center border border-gray-300 rounded-full px-4 py-1.5 bg-white">
-            <span class="text-sm text-gray-500 mr-2">Branch:</span>
-            <select id="filter-branch" class="filter-select text-sm font-medium text-primary bg-transparent pr-6 focus:outline-none cursor-pointer">
-                <option>Microbiology</option>
-                <option>Mathematics</option>
-            </select>
-        </div>
-        <div class="flex items-center border border-gray-300 rounded-full px-4 py-1.5 bg-white">
-            <span class="text-sm text-gray-500 mr-2">Level:</span>
-            <select id="filter-level" class="filter-select text-sm font-medium text-primary bg-transparent pr-6 focus:outline-none cursor-pointer">
-                <option>Sem 1</option>
-                <option>Sem 2</option>
-                <option>Sem 3</option>
-                <option>Sem 4</option>
-                <option>Sem 5</option>
-                <option>Sem 6</option>
-            </select>
-        </div>
-        <div class="flex items-center border border-gray-300 rounded-full px-4 py-1.5 bg-white">
-            <select id="filter-subject" class="filter-select text-sm font-medium text-gray-700 bg-transparent pr-6 focus:outline-none cursor-pointer">
-                <!-- Subject options will be injected by JavaScript based on Branch -->
-            </select>
-        </div>
-    </div>
-
-    <!-- Main Content Area -->
-    <main class="flex-grow max-w-7xl mx-auto w-full px-6 md:px-12 py-8 relative">
-        
-        <!-- Breadcrumb inside content -->
-        <div class="text-sm text-primary mb-8 font-medium flex items-center gap-2">
-            <a href="#" class="hover:underline">Notes</a> 
-            <i class="ph ph-caret-right text-gray-400"></i> 
-            <a href="#" id="breadcrumb-branch" class="hover:underline">Microbiology</a> 
-            <i class="ph ph-caret-right text-gray-400"></i> 
-            <span id="breadcrumb-level">Sem 1</span>
-        </div>
-
-        <!-- Section container -->
-        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-6 mb-8">
-            <div class="flex justify-between items-center mb-6">
-                <h2 id="section-title" class="text-xl font-bold text-gray-900">SEC (Minor)</h2>
-                <button class="flex items-center gap-2 px-3 py-1.5 border border-gray-200 rounded text-xs font-medium text-gray-600 hover:bg-gray-50">
-                    <i class="ph ph-share-network"></i> Share
-                </button>
-            </div>
-
-            <!-- Notes Grid -->
-            <div id="notes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Cards will be rendered here by JavaScript -->
+        <!-- Header -->
+        <div class="mb-6 md:mb-8 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-primary tracking-tight mb-2">
+                    <span id="page-branch-title">Microbiology</span> <span id="page-subtitle">Materials</span>
+                </h1>
+                <p class="text-slate-500">Access and download your course resources.</p>
             </div>
         </div>
 
-        <!-- Floating QR / Scan widget placeholder -->
-        <div class="fixed right-0 top-1/3 bg-primary text-white p-2 rounded-l-xl shadow-lg border border-blue-400 flex flex-col items-center hidden md:flex">
-            <div class="bg-white p-1 rounded mb-1">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=studybsc" alt="QR" class="w-12 h-12">
+        <!-- NOTES TAB CONTENT -->
+        <div id="notes-content" class="transition-opacity duration-500 ease-in-out">
+            <!-- Filters Section -->
+            <div class="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm mb-6 sm:mb-10 flex flex-col md:flex-row gap-3">
+                <div class="relative flex-1">
+                    <select id="filter-level" class="custom-select w-full bg-gray-50 border border-gray-100 text-slate-700 text-sm font-semibold rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all cursor-pointer hover:bg-gray-100">
+                        <option>Sem 1</option>
+                        <option>Sem 2</option>
+                        <option>Sem 3</option>
+                        <option>Sem 4</option>
+                        <option>Sem 5</option>
+                        <option>Sem 6</option>
+                    </select>
+                </div>
+                <div class="relative flex-1 md:flex-[2]">
+                    <select id="filter-subject" class="custom-select w-full bg-gray-50 border border-gray-100 text-slate-700 text-sm font-semibold rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all cursor-pointer hover:bg-gray-100">
+                        <!-- Options injected -->
+                    </select>
+                </div>
             </div>
-            <span class="text-[10px] font-bold">Scan Me</span>
+
+            <!-- Content Area -->
+            <div>
+                <div class="flex items-center gap-3 mb-6 bg-white px-4 py-3 rounded-xl border border-gray-100 shadow-sm w-max max-w-full">
+                    <div class="h-2 w-2 rounded-full bg-accent animate-pulse"></div>
+                    <h2 id="section-title" class="text-base font-bold text-primary truncate">SEC (Minor)</h2>
+                </div>
+
+                <!-- Notes Container -->
+                <div id="notes-container" class="space-y-10">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- SYLLABUS TAB CONTENT -->
+        <div id="syllabus-content" class="hidden opacity-0 transition-opacity duration-500 ease-in-out absolute top-0 left-0 w-full px-6 py-8 md:py-12 mt-24">
+            <div class="flex items-center gap-3 mb-6 bg-white px-4 py-3 rounded-xl border border-gray-100 shadow-sm w-max max-w-full">
+                <div class="h-2 w-2 rounded-full bg-indigo-500"></div>
+                <h2 class="text-base font-bold text-primary truncate">Official Syllabus (2026)</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                <!-- Syllabus Card 1 -->
+                <div class="group bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-300 flex flex-col h-full relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="glow-box h-12 w-12 bg-indigo-50 text-indigo-500 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">
+                            <i class="ph-fill ph-book-open text-indigo-500"></i>
+                        </div>
+                        <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase bg-slate-50 px-2 py-1 rounded-md">PDF</span>
+                    </div>
+                    <h3 class="font-bold text-primary text-lg mb-1 leading-tight">Micro-syllabus</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow">Detailed syllabus and course outcomes for Microbiology Major.</p>
+                    <div class="flex gap-2 mt-auto">
+                        <a href="https://drive.google.com/file/d/18IGY4-UydOIpH46dmWTCFS_ohZok7Hq6/view?usp=drive_link" target="_blank" class="flex-1 bg-gray-50 hover:bg-gray-100 text-slate-700 text-center text-sm font-semibold py-2.5 rounded-xl transition-colors">View</a>
+                        <a href="https://drive.google.com/file/d/18IGY4-UydOIpH46dmWTCFS_ohZok7Hq6/view?usp=drive_link" target="_blank" class="flex-1 bg-primary hover:bg-slate-800 text-white text-center text-sm font-semibold py-2.5 rounded-xl transition-colors shadow-sm">Download</a>
+                    </div>
+                </div>
+
+                <!-- Syllabus Card 2 -->
+                <div class="group bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 shadow-sm hover:shadow-xl hover:border-teal-200 transition-all duration-300 flex flex-col h-full relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="glow-box h-12 w-12 bg-teal-50 text-teal-500 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">
+                            <i class="ph-fill ph-flask text-teal-500"></i>
+                        </div>
+                        <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase bg-slate-50 px-2 py-1 rounded-md">PDF</span>
+                    </div>
+                    <h3 class="font-bold text-primary text-lg mb-1 leading-tight">Chemistry (Minor)</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow">Complete syllabus for Chemistry Minor subjects.</p>
+                    <div class="flex gap-2 mt-auto">
+                        <a href="https://drive.google.com/file/d/1tJUtfAuTxbcP5qYe1RGERQVHKFWvj_Os/view?usp=drive_link" target="_blank" class="flex-1 bg-gray-50 hover:bg-gray-100 text-slate-700 text-center text-sm font-semibold py-2.5 rounded-xl transition-colors">View</a>
+                        <a href="https://drive.google.com/file/d/1tJUtfAuTxbcP5qYe1RGERQVHKFWvj_Os/view?usp=drive_link" target="_blank" class="flex-1 bg-primary hover:bg-slate-800 text-white text-center text-sm font-semibold py-2.5 rounded-xl transition-colors shadow-sm">Download</a>
+                    </div>
+                </div>
+
+                <!-- Syllabus Card 3 -->
+                <div class="group bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 shadow-sm hover:shadow-xl hover:border-amber-200 transition-all duration-300 flex flex-col h-full relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="glow-box h-12 w-12 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">
+                            <i class="ph-fill ph-paw-print text-amber-500"></i>
+                        </div>
+                        <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase bg-slate-50 px-2 py-1 rounded-md">PDF</span>
+                    </div>
+                    <h3 class="font-bold text-primary text-lg mb-1 leading-tight">Zoology ID</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow">Interdisciplinary course syllabus for Zoology.</p>
+                    <div class="flex gap-2 mt-auto">
+                        <a href="https://drive.google.com/file/d/1mkAyNDwQGdUn1LJjtLWtj2TrGl7veAaK/view?usp=drive_link" target="_blank" class="flex-1 bg-gray-50 hover:bg-gray-100 text-slate-700 text-center text-sm font-semibold py-2.5 rounded-xl transition-colors">View</a>
+                        <a href="https://drive.google.com/file/d/1mkAyNDwQGdUn1LJjtLWtj2TrGl7veAaK/view?usp=drive_link" target="_blank" class="flex-1 bg-primary hover:bg-slate-800 text-white text-center text-sm font-semibold py-2.5 rounded-xl transition-colors shadow-sm">Download</a>
+                    </div>
+                </div>
+
+                <!-- Syllabus Card 4 -->
+                <div class="group bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 shadow-sm hover:shadow-xl hover:border-rose-200 transition-all duration-300 flex flex-col h-full relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="glow-box h-12 w-12 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">
+                            <i class="ph-fill ph-lightbulb text-rose-500"></i>
+                        </div>
+                        <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase bg-slate-50 px-2 py-1 rounded-md">PDF</span>
+                    </div>
+                    <h3 class="font-bold text-primary text-lg mb-1 leading-tight">S.E.C.</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow">Syllabus for Skill Enhancement Course.</p>
+                    <div class="flex gap-2 mt-auto">
+                        <a href="https://drive.google.com/file/d/1f3KhAmt7wg3MCVgvzcb67COGY9d_CLLx/view?usp=drive_link" target="_blank" class="flex-1 bg-gray-50 hover:bg-gray-100 text-slate-700 text-center text-sm font-semibold py-2.5 rounded-xl transition-colors">View</a>
+                        <a href="https://drive.google.com/file/d/1f3KhAmt7wg3MCVgvzcb67COGY9d_CLLx/view?usp=drive_link" target="_blank" class="flex-1 bg-primary hover:bg-slate-800 text-white text-center text-sm font-semibold py-2.5 rounded-xl transition-colors shadow-sm">Download</a>
+                    </div>
+                </div>
+
+                <!-- Syllabus Card 5 -->
+                <div class="group bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-300 flex flex-col h-full relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="glow-box h-12 w-12 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">
+                            <i class="ph-fill ph-translate text-blue-500"></i>
+                        </div>
+                        <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase bg-slate-50 px-2 py-1 rounded-md">PDF</span>
+                    </div>
+                    <h3 class="font-bold text-primary text-lg mb-1 leading-tight">English</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow">Course syllabus for English subjects.</p>
+                    <div class="flex gap-2 mt-auto">
+                        <a href="https://drive.google.com/file/d/1ILYM1JW4WIOGmMXfq5ERNCLsh4_2U4AM/view?usp=drive_link" target="_blank" class="flex-1 bg-gray-50 hover:bg-gray-100 text-slate-700 text-center text-sm font-semibold py-2.5 rounded-xl transition-colors">View</a>
+                        <a href="https://drive.google.com/file/d/1ILYM1JW4WIOGmMXfq5ERNCLsh4_2U4AM/view?usp=drive_link" target="_blank" class="flex-1 bg-primary hover:bg-slate-800 text-white text-center text-sm font-semibold py-2.5 rounded-xl transition-colors shadow-sm">Download</a>
+                    </div>
+                </div>
+
+                <!-- Syllabus Card 6 -->
+                <div class="group bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 shadow-sm hover:shadow-xl hover:border-orange-200 transition-all duration-300 flex flex-col h-full relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="glow-box h-12 w-12 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">
+                            <i class="ph-fill ph-scroll text-orange-500"></i>
+                        </div>
+                        <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase bg-slate-50 px-2 py-1 rounded-md">PDF</span>
+                    </div>
+                    <h3 class="font-bold text-primary text-lg mb-1 leading-tight">I.K.S.</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow">Indian Knowledge System course syllabus.</p>
+                    <div class="flex gap-2 mt-auto">
+                        <a href="https://drive.google.com/file/d/1jmUCMQYA_DqdEykVqReylM4c2Lbd0A29/view?usp=drive_link" target="_blank" class="flex-1 bg-gray-50 hover:bg-gray-100 text-slate-700 text-center text-sm font-semibold py-2.5 rounded-xl transition-colors">View</a>
+                        <a href="https://drive.google.com/file/d/1jmUCMQYA_DqdEykVqReylM4c2Lbd0A29/view?usp=drive_link" target="_blank" class="flex-1 bg-primary hover:bg-slate-800 text-white text-center text-sm font-semibold py-2.5 rounded-xl transition-colors shadow-sm">Download</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-50 border-t border-gray-100 py-8 mt-auto">
-        <div class="max-w-7xl mx-auto px-6 md:px-12 text-center text-gray-500 text-sm">
-            &copy; 2026 StudyBSc. All rights reserved.
+    <footer class="bg-white border-t border-gray-100 py-8 mt-auto">
+        <div class="max-w-6xl mx-auto px-6 text-center flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <div class="bg-primary text-white font-bold text-xs h-6 w-6 flex items-center justify-center rounded-md">SB</div>
+                <span class="font-semibold text-primary text-sm">StudyBSc</span>
+            </div>
+            <p class="text-slate-400 text-sm">&copy; 2026. Designed for excellence.</p>
         </div>
     </footer>
 
-    <!-- JavaScript to handle filtering -->
+    <!-- Scripts -->
     <script>
-        // Database array containing your uploaded study notes
         const notesDatabase = [
             { 
-                branch: 'Microbiology', 
-                level: 'Sem 1', 
-                subject: 'SEC (Minor)', 
-                title: 'Preview', 
-                downloads: '1',
-                viewUrl: 'https://drive.google.com/file/d/1nZrIjrnBUjtgBU66L-aCaLmsAoW5mktw/view?usp=drive_link',
+                branch: 'Microbiology', level: 'Sem 1', subject: 'SEC (Minor)', 
+                title: 'Preview', type: 'PDF', size: '1.2 MB',
+                viewUrl: 'https://drive.google.com/file/d/1nZrIjrnBUjtgBU66L-aCaLmsAoW5mktw/view?usp=drive_link', 
                 downloadUrl: 'https://drive.google.com/file/d/1nZrIjrnBUjtgBU66L-aCaLmsAoW5mktw/view?usp=drive_link'
+            },
+            { 
+                branch: 'Microbiology', level: 'Sem 1', subject: 'SEC (Minor)', 
+                title: 'Unit 1', type: 'PDF', size: '3.4 MB',
+                viewUrl: 'https://drive.google.com/file/d/1J9uqDOfPWZFA1iMJHkGqzB0aFcO3IbFZ/view?usp=drive_link', 
+                downloadUrl: 'https://drive.google.com/file/d/1J9uqDOfPWZFA1iMJHkGqzB0aFcO3IbFZ/view?usp=drive_link'
+            },
+            { 
+                branch: 'Microbiology', level: 'Sem 1', subject: 'SEC (Minor)', 
+                title: 'Unit 2', type: 'PDF', size: '2.8 MB',
+                viewUrl: 'https://drive.google.com/file/d/1n5iQrKWq9O3crtWq_1nLJ3yKn-JuzTXK/view?usp=drive_link', 
+                downloadUrl: 'https://drive.google.com/file/d/1n5iQrKWq9O3crtWq_1nLJ3yKn-JuzTXK/view?usp=drive_link'
+            },
+            { 
+                branch: 'Microbiology', level: 'Sem 1', subject: 'Microbiology', chapter: 'History of Microbiology',
+                title: 'Detailed Notes', type: 'PDF', size: '',
+                viewUrl: 'https://drive.google.com/file/d/1Fjk6-WSc1vqPT5z-q1fUSnMX9VMPT9zT/view?usp=drive_link', 
+                downloadUrl: 'https://drive.google.com/file/d/1Fjk6-WSc1vqPT5z-q1fUSnMX9VMPT9zT/view?usp=drive_link'
             }
         ];
 
-        // Elements
-        const filterBranch = document.getElementById('filter-branch');
         const filterLevel = document.getElementById('filter-level');
         const filterSubject = document.getElementById('filter-subject');
-        
-        const breadcrumbBranch = document.getElementById('breadcrumb-branch');
-        const breadcrumbLevel = document.getElementById('breadcrumb-level');
         const sectionTitle = document.getElementById('section-title');
-        const notesGrid = document.getElementById('notes-grid');
+        const notesContainer = document.getElementById('notes-container');
+        const pageBranchTitle = document.getElementById('page-branch-title');
+        const pageSubtitle = document.getElementById('page-subtitle');
 
-        // Branch to Subject mapping
         const branchSubjects = {
-            'Microbiology': [
-                'Microbiology Practical (Major)',
-                'Microbiology',
-                'Zoology (Minor)',
-                'Chemistry (Minor)',
-                'SEC (Minor)',
-                'I.K.S.',
-                'Chemistry Practical (Minor)',
-                'Zoology Practical (Minor)'
-            ],
-            'Mathematics': [
-                'Maths'
-            ]
+            'Microbiology': ['Microbiology', 'Zoology (Minor)', 'Chemistry (Minor)', 'SEC (Minor)', 'I.K.S.', 'Microbiology Practical (Major)', 'Chemistry Practical (Minor)', 'Zoology Practical (Minor)'],
+            'Mathematics': ['Maths']
         };
 
+        // Tab Switching Logic
+        function switchTab(tab) {
+            const indicator = document.getElementById('tab-indicator');
+            const notesBtn = document.getElementById('tab-notes');
+            const sylBtn = document.getElementById('tab-syllabus');
+            const notesContent = document.getElementById('notes-content');
+            const syllabusContent = document.getElementById('syllabus-content');
+
+            if (tab === 'notes') {
+                indicator.style.transform = 'translateX(0)';
+                notesBtn.classList.replace('text-slate-500', 'text-primary');
+                sylBtn.classList.replace('text-primary', 'text-slate-500');
+                
+                syllabusContent.classList.add('opacity-0');
+                setTimeout(() => {
+                    syllabusContent.classList.add('hidden');
+                    notesContent.classList.remove('hidden');
+                    // Force reflow before removing opacity-0
+                    void notesContent.offsetWidth; 
+                    notesContent.classList.remove('opacity-0');
+                    // Reset position since syllabus was absolutely positioned
+                    notesContent.style.position = 'relative';
+                }, 300);
+
+                pageSubtitle.textContent = "Materials";
+            } else {
+                indicator.style.transform = 'translateX(100%)';
+                sylBtn.classList.replace('text-slate-500', 'text-primary');
+                notesBtn.classList.replace('text-primary', 'text-slate-500');
+                
+                notesContent.classList.add('opacity-0');
+                setTimeout(() => {
+                    notesContent.classList.add('hidden');
+                    syllabusContent.classList.remove('hidden');
+                    // Syllabus content needs to be absolute while crossfading but we can just use relative here since notes is hidden
+                    syllabusContent.style.position = 'relative';
+                    syllabusContent.style.marginTop = '0'; // reset the absolute margin
+                    void syllabusContent.offsetWidth;
+                    syllabusContent.classList.remove('opacity-0');
+                }, 300);
+                
+                pageSubtitle.textContent = "Syllabus";
+            }
+        }
+
+        // Determine current branch from URL
+        let currentBranch = 'Microbiology';
+        const urlParams = new URLSearchParams(window.location.search);
+        const branchParam = urlParams.get('branch');
+        if (branchParam && branchSubjects[branchParam]) {
+            currentBranch = branchParam;
+        }
+        
+        // Set the dynamic title
+        pageBranchTitle.textContent = currentBranch;
+
         function updateSubjectOptions() {
-            const selectedBranch = filterBranch.value;
-            const subjects = branchSubjects[selectedBranch] || [];
+            const subjects = branchSubjects[currentBranch] || [];
             
-            filterSubject.innerHTML = '<option value="All">All Subjects</option>';
+            filterSubject.innerHTML = '';
             subjects.forEach(sub => {
                 filterSubject.innerHTML += `<option value="${sub}">${sub}</option>`;
             });
-
-            // Re-render notes after subjects are updated
             renderNotes();
         }
 
-        // Render Function
         function renderNotes() {
-            const selectedBranch = filterBranch.value;
             const selectedLevel = filterLevel.value;
             const selectedSubject = filterSubject.value;
 
-            // Update Header Text
-            breadcrumbBranch.textContent = selectedBranch;
-            breadcrumbLevel.textContent = selectedLevel;
-            sectionTitle.textContent = selectedSubject === 'All' ? `${selectedBranch} - All Subjects` : selectedSubject;
+            sectionTitle.textContent = selectedSubject;
 
-            // Filter data
             const filteredNotes = notesDatabase.filter(note => {
-                const matchBranch = note.branch === selectedBranch;
-                const matchLevel = note.level === selectedLevel;
-                const matchSubject = selectedSubject === 'All' || note.subject === selectedSubject;
-                return matchBranch && matchLevel && matchSubject;
+                return note.branch === currentBranch && 
+                       note.level === selectedLevel && 
+                       note.subject === selectedSubject;
             });
 
-            // Generate HTML
-            notesGrid.innerHTML = '';
+            notesContainer.innerHTML = '';
             
             if (filteredNotes.length === 0) {
-                notesGrid.innerHTML = `
-                <div class="col-span-full py-16 flex flex-col items-center justify-center text-gray-500">
-                    <i class="ph ph-folder-open text-6xl text-gray-300 mb-4"></i>
-                    <p class="text-xl font-bold text-gray-900 mb-2">No notes uploaded yet</p>
-                    <p class="text-sm">Study materials for this section haven't been added to the database yet.</p>
+                notesContainer.innerHTML = `
+                <div class="col-span-full py-20 flex flex-col items-center justify-center text-center bg-white rounded-3xl border border-gray-100 border-dashed">
+                    <div class="h-16 w-16 bg-gray-50 text-gray-300 rounded-full flex items-center justify-center text-3xl mb-4">
+                        <i class="ph ph-folder-dashed"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-primary mb-1">No materials found</h3>
+                    <p class="text-sm text-slate-500 max-w-sm">We couldn't find any documents matching your current filters. Try selecting a different subject or semester.</p>
                 </div>`;
                 return;
             }
 
+            // Group notes by chapter
+            const chapters = {};
             filteredNotes.forEach(note => {
-                const cardHTML = `
-                    <div class="border border-gray-200 rounded-xl p-5 hover:shadow-md transition bg-white flex flex-col h-full">
-                        <div class="flex justify-between items-start mb-4">
-                            <i class="ph-fill ph-file-pdf text-4xl text-pdfred"></i>
-                            <span class="text-xs text-gray-400 flex items-center gap-1"><i class="ph ph-download-simple"></i> ${note.downloads || '1'}</span>
-                        </div>
-                        <h3 class="font-bold text-gray-900 mb-2">${note.title}</h3>
-                        <p class="text-sm text-gray-500 mb-6 flex-grow">Notes and practice for ${note.title} (${note.subject})</p>
-                        
-                        <div class="grid grid-cols-2 gap-3 mt-auto">
-                            <a href="${note.viewUrl || '#'}" target="_blank" class="text-center border border-primary text-primary font-semibold text-sm py-2 rounded-lg hover:bg-blue-50 transition">VIEW</a>
-                            <a href="${note.downloadUrl || '#'}" target="_blank" class="text-center bg-primary text-white font-semibold text-sm py-2 rounded-lg hover:bg-blue-800 transition">GET PDF</a>
-                        </div>
-                    </div>
-                `;
-                notesGrid.insertAdjacentHTML('beforeend', cardHTML);
+                const chap = note.chapter || ''; // Empty string if no chapter
+                if (!chapters[chap]) chapters[chap] = [];
+                chapters[chap].push(note);
             });
+
+            let html = '';
+            for (const [chapter, notes] of Object.entries(chapters)) {
+                if (chapter) {
+                    html += `
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-5 flex items-center gap-3">
+                            <i class="ph-fill ph-folder-open text-accent"></i> ${chapter}
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">`;
+                } else {
+                    html += `
+                    <div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">`;
+                }
+                
+                notes.forEach(note => {
+                    const noteSizeDesc = note.size ? note.size : 'Course material for ' + note.subject;
+                    html += `
+                        <div class="group bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 shadow-sm hover:shadow-xl hover:border-accent/30 transition-all duration-300 flex flex-col h-full relative overflow-hidden">
+                            
+                            <div class="flex justify-between items-start mb-5">
+                                <div class="glow-box h-12 w-12 bg-red-50 text-pdf rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">
+                                    <i class="ph-fill ph-file-pdf"></i>
+                                </div>
+                                <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase bg-slate-50 px-2 py-1 rounded-md">${note.type || 'PDF'}</span>
+                            </div>
+                            
+                            <h3 class="font-bold text-primary text-lg mb-1 leading-tight">${note.title}</h3>
+                            <p class="text-sm text-slate-400 mb-6 flex-grow">${noteSizeDesc}</p>
+                            
+                            <div class="flex gap-2 mt-auto">
+                                <a href="${note.viewUrl}" target="_blank" class="flex-1 bg-gray-50 hover:bg-gray-100 text-slate-700 text-center text-sm font-semibold py-2.5 rounded-xl transition-colors">View</a>
+                                <a href="${note.downloadUrl}" target="_blank" class="flex-1 bg-primary hover:bg-slate-800 text-white text-center text-sm font-semibold py-2.5 rounded-xl transition-colors shadow-sm">Download</a>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>`;
+            }
+            notesContainer.innerHTML = html;
         }
 
-        // Event Listeners
-        filterBranch.addEventListener('change', updateSubjectOptions);
         filterLevel.addEventListener('change', renderNotes);
         filterSubject.addEventListener('change', renderNotes);
 
-        // Check URL for branch parameter to set initial state
-        const urlParams = new URLSearchParams(window.location.search);
-        const branchParam = urlParams.get('branch');
-        
-        if (branchParam) {
-            for (let i = 0; i < filterBranch.options.length; i++) {
-                if (filterBranch.options[i].text === branchParam) {
-                    filterBranch.selectedIndex = i;
-                    break;
-                }
-            }
-        }
-
-        // Initial Render
         updateSubjectOptions();
     </script>
+    <!-- WhatsApp Floating Action Button -->
+    <a href="https://wa.me/919227838831" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-4 md:bottom-8 md:right-8 flex flex-col items-center gap-2 group z-50 transition-transform active:scale-90">
+        <div class="relative flex items-center justify-center h-16 w-16 rounded-full bg-white/40 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] border border-white/60 overflow-hidden transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,211,102,0.4)] group-hover:-translate-y-1">
+            <!-- Shimmer -->
+            <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/80 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+            <!-- Icon -->
+            <i class="ph ph-whatsapp-logo text-[40px] text-[#25D366] relative z-10 group-hover:scale-110 transition-transform duration-500 ease-out drop-shadow-sm"></i>
+        </div>
+        <span class="text-[10px] font-semibold text-slate-500 text-center leading-tight">
+            Support / Contact<br>Developer
+        </span>
+    </a>
+
 </body>
 </html>
