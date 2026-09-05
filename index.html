@@ -116,18 +116,120 @@
         </div>
     </footer>
 
-    <!-- WhatsApp Floating Action Button -->
-    <a href="https://wa.me/919227838831" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-4 md:bottom-8 md:right-8 flex flex-col items-center gap-2 group z-50 transition-transform active:scale-90">
-        <div class="relative flex items-center justify-center h-16 w-16 rounded-full bg-white/40 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] border border-white/60 overflow-hidden transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,211,102,0.4)] group-hover:-translate-y-1">
+    <!-- Feedback Floating Action Button -->
+    <button onclick="openFeedbackModal()" class="fixed bottom-6 right-4 md:bottom-8 md:right-8 flex flex-col items-center gap-2 group z-50 transition-transform active:scale-90">
+        <div class="relative flex items-center justify-center h-16 w-16 rounded-full bg-white/40 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] border border-white/60 overflow-hidden transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] group-hover:-translate-y-1">
             <!-- Shimmer -->
             <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/80 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
             <!-- Icon -->
-            <i class="ph ph-whatsapp-logo text-[40px] text-[#25D366] relative z-10 group-hover:scale-110 transition-transform duration-500 ease-out drop-shadow-sm"></i>
+            <i class="ph ph-chat-centered-text text-[40px] text-indigo-600 relative z-10 group-hover:scale-110 transition-transform duration-500 ease-out drop-shadow-sm"></i>
         </div>
         <span class="text-[10px] font-semibold text-slate-500 text-center leading-tight">
             Suggest / Contact<br>Developer
         </span>
-    </a>
+    </button>
 
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="fixed inset-0 z-[100] hidden opacity-0 transition-opacity duration-300 ease-in-out">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeFeedbackModal()"></div>
+        
+        <!-- Modal Content -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md px-4 sm:px-0 transition-transform duration-300 ease-out scale-95" id="feedback-modal-content">
+            <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col">
+                <div class="p-6 sm:p-8 bg-gradient-to-br from-indigo-50 to-white relative">
+                    <button onclick="closeFeedbackModal()" class="absolute top-4 right-4 h-8 w-8 bg-white hover:bg-gray-50 text-slate-400 hover:text-slate-600 rounded-full flex items-center justify-center transition-colors shadow-sm">
+                        <i class="ph ph-x font-bold"></i>
+                    </button>
+                    <div class="h-12 w-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-sm">
+                        <i class="ph-fill ph-paper-plane-tilt"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">Share your feedback</h2>
+                    <p class="text-slate-500 text-sm">Help us improve StudyBSc. Your suggestions make a difference!</p>
+                </div>
+                
+                <form action="https://api.web3forms.com/submit" method="POST" id="feedback-form" class="p-6 sm:p-8 pt-2 sm:pt-4 flex flex-col gap-4">
+                    <!-- Web3Forms access key -->
+                    <input type="hidden" name="access_key" value="4ee8ef14-06b0-4f42-ac5e-9121f1e09fda">
+                    <input type="hidden" name="subject" value="New Feedback for StudyBSc">
+                    <input type="hidden" name="from_name" value="StudyBSc Feedback Form">
+                    
+                    <textarea name="message" rows="4" required placeholder="What's on your mind? Have a feature request or found a bug?" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all resize-none"></textarea>
+                    
+                    <button type="submit" class="w-full bg-slate-900 hover:bg-indigo-600 text-white font-bold py-3.5 rounded-xl transition-all duration-300 shadow-lg shadow-indigo-200 flex items-center justify-center gap-2 mt-2">
+                        <span>Send Feedback</span>
+                        <i class="ph-bold ph-arrow-right"></i>
+                    </button>
+                    <p id="feedback-status" class="text-center text-sm font-medium mt-2 hidden"></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal Logic -->
+    <script>
+        const feedbackModal = document.getElementById('feedback-modal');
+        const feedbackContent = document.getElementById('feedback-modal-content');
+        const feedbackForm = document.getElementById('feedback-form');
+        const feedbackStatus = document.getElementById('feedback-status');
+
+        function openFeedbackModal() {
+            feedbackModal.classList.remove('hidden');
+            setTimeout(() => {
+                feedbackModal.classList.remove('opacity-0');
+                feedbackContent.classList.remove('scale-95');
+                feedbackContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeFeedbackModal() {
+            feedbackModal.classList.add('opacity-0');
+            feedbackContent.classList.remove('scale-100');
+            feedbackContent.classList.add('scale-95');
+            setTimeout(() => {
+                feedbackModal.classList.add('hidden');
+                feedbackStatus.classList.add('hidden');
+                feedbackForm.reset();
+                feedbackForm.querySelector('button[type="submit"]').style.display = 'flex';
+            }, 300);
+        }
+
+        feedbackForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(feedbackForm);
+            const submitBtn = feedbackForm.querySelector('button[type="submit"]');
+            
+            submitBtn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i><span>Sending...</span>';
+            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                body: formData
+            })
+            .then(async (response) => {
+                let json = await response.json();
+                if (response.status == 200) {
+                    submitBtn.style.display = 'none';
+                    feedbackStatus.classList.remove('hidden', 'text-red-500');
+                    feedbackStatus.classList.add('text-green-500');
+                    feedbackStatus.innerHTML = '<i class="ph-fill ph-check-circle text-lg inline-block align-text-bottom mr-1"></i> Thank you! Your feedback has been sent.';
+                    setTimeout(closeFeedbackModal, 3000);
+                } else {
+                    feedbackStatus.classList.remove('hidden');
+                    feedbackStatus.classList.add('text-red-500');
+                    feedbackStatus.innerText = json.message;
+                    submitBtn.innerHTML = '<span>Send Feedback</span><i class="ph-bold ph-arrow-right"></i>';
+                    submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                }
+            })
+            .catch(error => {
+                feedbackStatus.classList.remove('hidden');
+                feedbackStatus.classList.add('text-red-500');
+                feedbackStatus.innerText = "Something went wrong!";
+                submitBtn.innerHTML = '<span>Send Feedback</span><i class="ph-bold ph-arrow-right"></i>';
+                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            });
+        });
+    </script>
 </body>
 </html>
