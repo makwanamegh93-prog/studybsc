@@ -398,10 +398,22 @@
                 downloadUrl: 'https://drive.google.com/file/d/1XGPt20pjjASOCCq8G0BV8My9b2AUS1gj/view?usp=drive_link'
             },
             { 
+                branch: 'Microbiology', level: 'Sem 1', subject: 'Microbiology', chapter: 'Techniques to Study Microbiology',
+                title: 'Microscopy', type: 'PDF', size: '',
+                viewUrl: 'https://drive.google.com/file/d/1_pj-vnpOao1k2d6rk5S7ykcpMfVT-fua/view?usp=drive_link', 
+                downloadUrl: 'https://drive.google.com/file/d/1_pj-vnpOao1k2d6rk5S7ykcpMfVT-fua/view?usp=drive_link'
+            },
+            { 
                 branch: 'Microbiology', level: 'Sem 1', subject: 'Microbiology', chapter: 'Prokaryotic Cell Organization',
                 title: 'Detailed Notes', type: 'PDF', size: '',
                 viewUrl: 'https://drive.google.com/file/d/12d9tn1KGZyPDuuOtk6d9hA4gpbYQobNa/view?usp=drive_link', 
                 downloadUrl: 'https://drive.google.com/file/d/12d9tn1KGZyPDuuOtk6d9hA4gpbYQobNa/view?usp=drive_link'
+            },
+            { 
+                branch: 'Microbiology', level: 'Sem 1', subject: 'Microbiology', chapter: 'Prokaryotic Cell Organization',
+                title: 'Revision Sheet', type: 'PDF', size: '',
+                viewUrl: 'https://drive.google.com/file/d/1RfgjrxYaXPSmIZ47fm-DkjTxGAtZmViA/view?usp=drive_link', 
+                downloadUrl: 'https://drive.google.com/file/d/1RfgjrxYaXPSmIZ47fm-DkjTxGAtZmViA/view?usp=drive_link'
             },
             { 
                 branch: 'Microbiology', level: 'Sem 1', subject: 'Chemistry (Minor)', chapter: 'Periodic Table',
@@ -414,6 +426,12 @@
                 title: 'Detailed Notes', type: 'PDF', size: '',
                 viewUrl: 'https://drive.google.com/file/d/1pm6g_9ROq_bm4yIo1qK9Fs0RYAiH5Dna/view?usp=drive_link', 
                 downloadUrl: 'https://drive.google.com/file/d/1pm6g_9ROq_bm4yIo1qK9Fs0RYAiH5Dna/view?usp=drive_link'
+            },
+            { 
+                branch: 'Microbiology', level: 'Sem 1', subject: 'Microbiology Practical (Major)', chapter: '',
+                title: 'Reference Book', type: 'PDF', size: '',
+                viewUrl: 'https://drive.google.com/file/d/1zPCcngKVK8CTkj4fYlNmv8FgCHghRuqT/view?usp=drive_link', 
+                downloadUrl: 'https://drive.google.com/file/d/1zPCcngKVK8CTkj4fYlNmv8FgCHghRuqT/view?usp=drive_link'
             }
         ];
 
@@ -625,6 +643,34 @@
         </span>
     </button>
 
+    <!-- Feedback Gentle Nudge Popup (Least Disturbing) -->
+    <div id="feedback-nudge" class="fixed bottom-24 right-4 md:bottom-28 md:right-8 z-40 max-w-[310px] bg-white/95 backdrop-blur-xl border border-indigo-100/90 rounded-2xl shadow-[0_12px_36px_-6px_rgba(79,70,229,0.2)] p-3.5 transition-all duration-500 transform translate-y-6 opacity-0 pointer-events-none flex items-start gap-3">
+        <!-- Icon Badge -->
+        <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-blue-500 text-white flex-shrink-0 flex items-center justify-center text-lg shadow-sm shadow-indigo-200">
+            <i class="ph-fill ph-chat-circle-dots"></i>
+        </div>
+        <!-- Content -->
+        <div class="flex-1 min-w-0 pr-3">
+            <div class="flex items-center gap-1.5 mb-1">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-md">Help Us Grow</span>
+            </div>
+            <p class="text-xs font-bold text-slate-800 leading-snug">
+                “Of students, by students, for students.”
+            </p>
+            <p class="text-[11px] text-slate-500 mt-0.5 leading-tight">
+                Got 10 seconds? Tell us what notes we should add next!
+            </p>
+            <button onclick="openFeedbackModal(); closeFeedbackNudge();" class="mt-2 text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 group/btn transition-colors">
+                <span>Give Quick Feedback</span>
+                <i class="ph-bold ph-arrow-right text-[10px] group-hover/btn:translate-x-0.5 transition-transform"></i>
+            </button>
+        </div>
+        <!-- Dismiss Button -->
+        <button onclick="closeFeedbackNudge()" aria-label="Close notification" class="absolute top-2.5 right-2.5 h-6 w-6 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors">
+            <i class="ph ph-x font-bold text-xs"></i>
+        </button>
+    </div>
+
     <!-- Feedback Modal -->
     <div id="feedback-modal" class="fixed inset-0 z-[100] hidden opacity-0 transition-opacity duration-300 ease-in-out">
         <!-- Backdrop -->
@@ -640,7 +686,8 @@
                     <div class="h-12 w-12 bg-gradient-to-tr from-indigo-600 to-blue-600 text-white rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-lg shadow-indigo-200">
                         <i class="ph-fill ph-chat-circle-dots"></i>
                     </div>
-                    <h2 class="text-2xl font-bold text-slate-800 mb-2">Share your feedback</h2>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-1">Share your feedback</h2>
+                    <p class="text-indigo-600 font-semibold text-xs mb-1.5">“Of students, by students, for students.”</p>
                     <p class="text-slate-500 text-sm">Help us improve StudyBSc. Your suggestions make a difference!</p>
                 </div>
                 
@@ -662,14 +709,33 @@
         </div>
     </div>
 
-    <!-- Feedback Modal Logic -->
+    <!-- Feedback Modal & Nudge Logic -->
     <script>
         const feedbackModal = document.getElementById('feedback-modal');
         const feedbackContent = document.getElementById('feedback-modal-content');
         const feedbackForm = document.getElementById('feedback-form');
         const feedbackStatus = document.getElementById('feedback-status');
+        const feedbackNudge = document.getElementById('feedback-nudge');
+
+        function showFeedbackNudge() {
+            if (sessionStorage.getItem('feedback_nudge_closed')) return;
+            if (!feedbackNudge) return;
+            feedbackNudge.classList.remove('pointer-events-none', 'translate-y-6', 'opacity-0');
+            feedbackNudge.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+        }
+
+        function closeFeedbackNudge() {
+            if (!feedbackNudge) return;
+            feedbackNudge.classList.add('translate-y-6', 'opacity-0', 'pointer-events-none');
+            feedbackNudge.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            sessionStorage.setItem('feedback_nudge_closed', 'true');
+        }
+
+        // Show non-intrusive nudge gently after 6 seconds
+        setTimeout(showFeedbackNudge, 6000);
 
         function openFeedbackModal() {
+            closeFeedbackNudge();
             feedbackModal.classList.remove('hidden');
             setTimeout(() => {
                 feedbackModal.classList.remove('opacity-0');
